@@ -1,0 +1,139 @@
+COVID-19 VACCINES ANALYSIS
+INTRODUCTION
+          This problem is to implement Data science techniques to analyse covid - 19 vaccinations based on the location ,date,vaccines and total number of vaccinated people.The goal is to analyse the over all vaccinations. This project involves data collection,data preprocessing,clustering algorithms,visualisation and interpretation of results.
+         In this phase the design to innovation and dataflow of covid 19 vaccine analysis is going to be done.
+PREREQUISITES FOR BUILDING A CUSTOMER SEGMENTATION MODEL
+The data is obtained from https://www.Kaggle.com/data
+Have the following libraries installed?-?Numpy, Pandas, Matplotlib, Seaborn, ScikitLearn, Kneed, and Scipy.
+Columns Required from dataset
+Location
+Date
+Vaccine
+Total_vaccinations
+Country
+ISO code
+People vaccinated
+People fully vaccinated
+Daily_vaccinations_raw
+Daily_vaccinations
+total_vaccinations_per_hundred
+ people_vaccinated_per_hundred
+people_fully_vaccinated_per_hundred
+ daily_vaccinations_per_million
+source_name
+
+UNDERSTAND THE SEGMENTATION DATA
+
+Before starting any data science project, it is vital to explore the dataset and understand
+each variable.
+ Libraries Imported :
+1. Pandas
+2. Matplotlib
+3. Seaborn
+ Loading the Data
+import pandas as pd
+ vaccinations_df = pd.read_csv('../input/covid-world-vaccination-                   progress/country_vaccinations.csv')
+vaccinations_df
+	country	iso_code	date	total_vaccinations	people_vaccinated	people_fully_vaccinated	daily_vaccinations_raw	daily_vaccinations	total_vaccinations_per_hundred	people_vaccinated_per_hundred	people_fully_vaccinated_per_hundred	daily_vaccinations_per_million	vaccines	source_name	source_website
+0	Afghanistan	AFG	2021-02-22	0.0	0.0	NaN	NaN	NaN	0.00	0.00	NaN	NaN	Johnson&Johnson, Oxford/AstraZeneca, Pfizer/Bi...	World Health Organization	https://covid19.who.int/
+1	Afghanistan	AFG	2021-02-23	NaN	NaN	NaN	NaN	1367.0	NaN	NaN	NaN	34.0	Johnson&Johnson, Oxford/AstraZeneca, Pfizer/Bi...	World Health Organization	https://covid19.who.int/
+2	Afghanistan	AFG	2021-02-24	NaN	NaN	NaN	NaN	1367.0	NaN	NaN	NaN	34.0	Johnson&Johnson, Oxford/AstraZeneca, Pfizer/Bi...	World Health Organization	https://covid19.who.int/
+3	Afghanistan	AFG	2021-02-25	NaN	NaN	NaN	NaN	1367.0	NaN	NaN	NaN	34.0	Johnson&Johnson, Oxford/AstraZeneca, Pfizer/Bi...	World Health Organization	https://covid19.who.int/
+4	Afghanistan	AFG	2021-02-26	NaN	NaN	NaN	NaN	1367.0	NaN	NaN	NaN	34.0	Johnson&Johnson, Oxford/AstraZeneca, Pfizer/Bi...	World Health Organization	https://covid19.who.int/
+...	...	...	...	...	...	...	...	...	...	...	...	...	...	...	...
+86507	Zimbabwe	ZWE	2022-03-25	8691642.0	4814582.0	3473523.0	139213.0	69579.0	57.59	31.90	23.02	4610.0	Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...	Ministry of Health	https://www.arcgis.com/home/webmap/viewer.html...
+86508	Zimbabwe	ZWE	2022-03-26	8791728.0	4886242.0	3487962.0	100086.0	83429.0	58.25	32.38	23.11	5528.0	Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...	Ministry of Health	https://www.arcgis.com/home/webmap/viewer.html...
+86509	Zimbabwe	ZWE	2022-03-27	8845039.0	4918147.0	3493763.0	53311.0	90629.0	58.61	32.59	23.15	6005.0	Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...	Ministry of Health	https://www.arcgis.com/home/webmap/viewer.html...
+86510	Zimbabwe	ZWE	2022-03-28	8934360.0	4975433.0	3501493.0	89321.0	100614.0	59.20	32.97	23.20	6667.0	Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...	Ministry of Health	https://www.arcgis.com/home/webmap/viewer.html...
+86511	Zimbabwe	ZWE	2022-03-29	9039729.0	5053114.0	3510256.0	105369.0	103751.0	59.90	33.48	23.26	6874.0	Oxford/AstraZeneca, Sinopharm/Beijing, Sinovac...	Ministry of Health	https://www.arcgis.com/home/webmap/viewer.html..
+PRE PROCESSING DATA FOR SEGMENTATION
+
+ The raw data we downloaded is complex and in a format that cannot be easily ingested by
+covid 19 vaccination analysis. We need to do some preliminary data preparation to make this
+data interpretable
+Description
+	total_vaccinations	people_vaccinated	people_fully_vaccinated	daily_vaccinations_raw	daily_vaccinations	total_vaccinations_per_hundred	people_vaccinated_per_hundred	people_fully_vaccinated_per_hundred	daily_vaccinations_per_million
+count	4.360700e+04	4.129400e+04	3.880200e+04	3.536200e+04	8.621300e+04	43607.000000	41294.000000	38802.000000	86213.000000
+mean	4.592964e+07	1.770508e+07	1.413830e+07	2.705996e+05	1.313055e+05	80.188543	40.927317	35.523243	3257.049157
+std	2.246004e+08	7.078731e+07	5.713920e+07	1.212427e+06	7.682388e+05	67.913577	29.290759	28.376252	3934.312440
+min	0.000000e+00	0.000000e+00	1.000000e+00	0.000000e+00	0.000000e+00	0.000000	0.000000	0.000000	0.000000
+25%	5.264100e+05	3.494642e+05	2.439622e+05	4.668000e+03	9.000000e+02	16.050000	11.370000	7.020000	636.000000
+50%	3.590096e+06	2.187310e+06	1.722140e+06	2.530900e+04	7.343000e+03	67.520000	41.435000	31.750000	2050.000000
+75%	1.701230e+07	9.152520e+06	7.559870e+06	1.234925e+05	4.409800e+04	132.735000	67.910000	62.080000	4682.000000
+max	3.263129e+09	1.275541e+09	1.240777e+09	2.474100e+07	2.242429e+07	345.370000	124.760000	122.370000	117497.000000
+
+
+Null values
+vaccinations_df.isnull().sum()
+
+country                                    0
+iso_code                                   0
+date                                       0
+total_vaccinations                     42905
+people_vaccinated                      45218
+people_fully_vaccinated                47710
+daily_vaccinations_raw                 51150
+daily_vaccinations                       299
+total_vaccinations_per_hundred         42905
+people_vaccinated_per_hundred          45218
+people_fully_vaccinated_per_hundred    47710
+daily_vaccinations_per_million           299
+vaccines                                   0
+source_name                                0
+source_website                             0
+dtype: int64
+plt.figure(figsize=(16,8))
+sns.lineplot(x=vaccinations_df.date, y=vaccinations_df.daily_vaccinations)
+plt.title('The Number of daily vaccinations dynamic')
+plt.show()
+ 
+
+ 
+BUILDING THE COVID 19 VACCINATION ANALYSIS
+
+We are going to create a K-Means clustering algorithm to perform covid 19 vaccine analysis.The goal of a K-Means clustering model is to segment all the data available into
+non-overlapping sub-groups that are distinct from each other.
+
+
+plt.figure(figsize=(12,8))
+ax = sns.barplot(x=daily_vaccinations_per_million, y=daily_vaccinations_per_million.index )
+plt.xlabel("daily vaccinations per million")
+plt.ylabel("Country")
+plt.title("Daily COVID-19 vaccine doses administered per million people");
+
+for patch in ax.patches:
+    width = patch.get_width()
+    height = patch.get_height()
+    x = patch.get_x()
+    y = patch.get_y()
+    
+    plt.text(width + x, height + y, '{:.1f} '.format(width))
+ 
+
+fig = px.scatter(new_df,x = 'total_vaccinations',y='total_vaccinations_per_hundred',
+                 size='total_vaccinations',
+                 hover_name = 'country',size_max = 50,
+                 title="Total vs Total vaccinations per hundred grouped by Vaccines",
+                color_discrete_sequence = px.colors.qualitative.Bold)
+fig.show()
+
+ 
+DATA FLOW
+
+ 
+
+ 
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
